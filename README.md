@@ -1,3 +1,3 @@
 # IRI
 
-Introdução à robótica inteligente 123123
+Introdução à robótica inteligente
