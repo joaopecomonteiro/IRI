@@ -24,7 +24,7 @@ def print_devices() -> None:
 # can't instantly start rotating at the target motor speeds.
 # Made for the epuck robot.
 # https://cyberbotics.com/doc/guide/epuck?version=R2021a
-AXLE_LENGTH: float = 0.057  # obtained with manual calibration. It should be 0.052 m according to the documentation.
+AXLE_LENGTH: float = 0.0585  # obtained with manual calibration. It should be 0.052 m according to the documentation.
 WHEEL_RADIUS: float = 0.0205
 MAX_SPEED: float = 6.28
 
@@ -82,4 +82,5 @@ def rotate2(robot: Robot, theta: float, angular_vel: float) -> None:
     start_time: float = robot.getTime()
     cmd_vel(robot, 0, angular_vel)
     while robot.getTime() < start_time + duration:
+
         robot.step()
