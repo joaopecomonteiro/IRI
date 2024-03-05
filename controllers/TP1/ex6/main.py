@@ -9,13 +9,17 @@ import math
 
 robot: Robot = Robot()
 
-radius = 2*math.pi
-linear_velocity = 0.5
+angular_velocity = 4*math.pi
+linear_velocity = 1
 
-while True:
-
-    cmd_vel(robot, linear_velocity, radius)
+while linear_velocity > 0:
+    print(linear_velocity)
+    cmd_vel(robot, linear_velocity, angular_velocity)
     robot.step(64)
-    linear_velocity -= 0.01
-# TODO
+    linear_velocity = linear_velocity/1.1
+
+cmd_vel(robot, linear_velocity, angular_velocity)
+
+while robot.step(64) != -1:
+    pass
 
