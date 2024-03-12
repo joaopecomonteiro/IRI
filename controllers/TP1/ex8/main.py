@@ -2,6 +2,8 @@
 IRI - TP1 - Ex 8
 By: Gonçalo Leão
 """
+import os
+os.environ["WEBOTS_HOME"] = "/usr/local/webots"
 
 from controller import Robot, Lidar, LidarPoint
 from controllers.utils import *

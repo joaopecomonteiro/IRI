@@ -2,6 +2,8 @@
 IRI - TP1 - Ex 10
 By: Gonçalo Leão
 """
+import os
+os.environ["WEBOTS_HOME"] = "/usr/local/webots"
 
 from controller import Robot, GPS
 from controllers.utils import cmd_vel

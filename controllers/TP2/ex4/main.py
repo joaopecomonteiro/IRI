@@ -2,6 +2,11 @@
 IRI - TP2 - Ex 4
 By: Gonçalo Leão
 """
+
+import os
+os.environ["WEBOTS_HOME"] = "/usr/local/webots"
+
+
 import math
 
 from numpy import random

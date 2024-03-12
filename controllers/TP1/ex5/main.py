@@ -2,6 +2,8 @@
 IRI - TP1 - Ex 5
 By: Gonçalo Leão
 """
+import os
+os.environ["WEBOTS_HOME"] = "/usr/local/webots"
 
 import math
 from controller import Robot

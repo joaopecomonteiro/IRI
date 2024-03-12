@@ -2,6 +2,11 @@
 IRI - TP2 - Ex 2
 By: Gonçalo Leão
 """
+
+import os
+os.environ["WEBOTS_HOME"] = "/usr/local/webots"
+
+
 import math
 from controller import Robot, DistanceSensor
 from controllers.utils import cmd_vel

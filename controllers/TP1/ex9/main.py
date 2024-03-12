@@ -2,6 +2,10 @@
 IRI - TP1 - Ex 9
 By: Gonçalo Leão
 """
+
+import os
+os.environ["WEBOTS_HOME"] = "/usr/local/webots"
+
 import math
 from controller import Robot, Compass
 from controllers.utils import cmd_vel
