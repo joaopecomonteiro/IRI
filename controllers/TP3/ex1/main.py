@@ -2,6 +2,9 @@
 IRI - TP3 - Ex 1
 By: Gonçalo Leão
 """
+import os
+os.environ["WEBOTS_HOME"] = "/usr/local/webots"
+
 import math
 
 import numpy as np
@@ -13,23 +16,43 @@ from controller import Robot, LidarPoint, Lidar, Compass, GPS
 from controllers.localization_utils import draw_real_vs_estimated_localization
 from controllers.transformations import create_tf_matrix, get_translation, get_rotation
 
+import pdb
 
 def find_possible_poses(robot_tf, readings: [LidarPoint], min_x: float, max_x: float, min_y: float, max_y: float) -> ([(float, float)], [float]):
     # Get the transformation for the robot relative to the corner (TCR)
     corner_robot_tf: np.ndarray = find_corner_transformation(readings)
 
     # Get the list of transformations for each corner relative to the origin (list of TOC)
-    corner_tfs: [np.ndarray] = [
-        # TODO
-    ]
+
+
+    tf1 = create_tf_matrix((max_x, max_y, 0), math.pi/4)
+    #tf1 = np.array([[np.cos(math.pi / 4), -np.sin(math.pi / 4), 0, 0.5],[np.sin(math.pi / 4), np.cos(math.pi / 4), 0, 0.5],[0, 0, 1, 0],[0, 0, 0, 1]])
+
+    #tf2 = np.array([[np.cos(math.pi), -np.sin(math.pi), 0, 0],[np.sin(math.pi), np.cos(math.pi), 0, 0],[0, 0, 1, 0],[0, 0, 0, 1]])
+    tf2 = create_tf_matrix((min_x, max_y, 0), 3*math.pi/4)
+
+    #tf3 = np.array([[np.cos(3*math.pi / 2), -np.sin(3*math.pi / 2), 0, 0],[np.sin(3*math.pi / 2), np.cos(3*math.pi / 2), 0, 0],[0, 0, 1, 0],[0, 0, 0, 1]])
+    tf3 = create_tf_matrix((min_x, min_y, 0), 5*math.pi/4)
+
+    tf4 = create_tf_matrix((max_x, min_y, 0), 7*math.pi/4)
+
+
+    corner_tfs: [np.ndarray] = [tf1, tf2, tf3, tf4]
 
     # Get the list of estimated transformations = list of estimated transformations for the robot relative to the origin (TOR)
     estimated_translations: [(float, float)] = []
     estimated_rotations: [float] = []
+
     for corner_tf in corner_tfs:
+        print(corner_tf)
         # TOR = TOC * TCR
         # TODO
-        pass
+        tor = corner_tf @ np.linalg.inv(corner_robot_tf)
+        estimated_translations.append(get_translation(tor))
+        estimated_rotations.append(get_rotation(tor))
+
+
+
 
     return estimated_translations, estimated_rotations
 
@@ -42,19 +65,30 @@ def find_corner_transformation(readings: [LidarPoint]) -> np.ndarray:
     model1, inliers_bools1 = ransac(data, LineModelND, min_samples=2,
                                     residual_threshold=0.005, max_trials=10000)
     # Retrieve the outliers
-    outliers1: array  # TODO
+    # outliers1: array  # TODO
+    outliers1 = np.array([point for idx, point in enumerate(data) if not inliers_bools1[idx]])
+
+    #pdb.set_trace()
 
     # Find the second line
     assert len(outliers1) >= 2, "Cannot detect the second wall!!"
-    model2, inliers_bools2 = ransac(...)  # TODO
+    model2, inliers_bools2 = ransac(outliers1, LineModelND, min_samples=2,
+                                    residual_threshold=0.005, max_trials=10000)  # TODO
 
     # Retrieve the outliers
-    outliers2: array  # TODO
+    # outliers2: array  # TODO
+    outliers2 = [point for idx, point in enumerate(outliers1) if not inliers_bools2[idx]]
+
     print("Num outliers: ", len(outliers2))
 
     # Compute the inliers
-    inliers1: array  # TODO
-    inliers2: array  # TODO
+    # inliers1: array  # TODO
+    inliers1 = [point for idx, point in enumerate(data) if inliers_bools1[idx]]
+
+    # inliers2: array  # TODO
+    inliers2 = [point for idx, point in enumerate(outliers1) if inliers_bools2[idx]]
+
+    print(f"inliers1: {len(inliers1)}, inliers2: {len(inliers2)}")
 
     # Draw the walls
     draw_walls(data, model1, inliers1, model2, inliers2, outliers2)
@@ -62,6 +96,7 @@ def find_corner_transformation(readings: [LidarPoint]) -> np.ndarray:
     # Find the corner coordinates and angle
     corner_pos: (float, float) = line_line_intersection(model1.params[0], model1.params[1],
                                                         model2.params[0], model2.params[1])
+
     corner_angle: float = line_line_angle(model1.params[1], model2.params[1])
 
     return create_tf_matrix([corner_pos[0], corner_pos[1], 0.0], corner_angle)
@@ -151,7 +186,14 @@ def line_line_intersection(origin1: array([float, float]), direction1: array([fl
 
 def line_line_angle(direction1: array([float, float]), direction2: array([float, float])) -> float:
     # TODO
-    return 0.0
+    if direction1[0] < 0:
+        direction1 = -direction1
+    if direction2[0] < 0:
+        direction2 = -direction2
+    point = direction1 + direction2
+    point = point / np.linalg.norm(point)
+
+    return math.atan2(point[1], point[0])
 
 
 def main() -> None:
