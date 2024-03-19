@@ -32,7 +32,7 @@ while True:
 
     cmd_vel(robot, 0.1, 0)
     gps_vals = gps.getValues()
-    while 
+    #while
 
     #cmd_vel(robot, 0.1, 0)
     #robot.step(1000)
