@@ -185,7 +185,6 @@ def line_line_intersection(origin1: array([float, float]), direction1: array([fl
 
 
 def line_line_angle(direction1: array([float, float]), direction2: array([float, float])) -> float:
-    # TODO
     if direction1[0] < 0:
         direction1 = -direction1
     if direction2[0] < 0:
